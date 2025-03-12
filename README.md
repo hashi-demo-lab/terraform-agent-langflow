@@ -30,6 +30,13 @@ ollama run qwen2.5-coder:14b
 ollama run qwq
 ```
 
+## install Watsonx-ai SDK
+```zsh
+source langflow/bin/activate
+uv pip install ibm-watsonx-ai
+```
+
+
 
 ## Open LangFlow
 
