@@ -18,7 +18,7 @@ class WatsonxComponent(Component):
     icon = "custom_components"
     documentation = "https://cloud.ibm.com/apidocs/watsonx"
     name = "WatsonxComponent"
-    
+
     inputs = [
         SecretStrInput(
             name="api_key",
@@ -52,9 +52,10 @@ class WatsonxComponent(Component):
             options=[
                 "ibm/granite-3-2-8b-instruct",
                 "meta-llama/llama-3-3-70b-instruct",
-                "ibm/granite-34b-code-instruct"
+                "ibm/granite-34b-code-instruct",
+                "ibm/granite-3-2b-instruct"
             ],
-            value="ibm/granite-13b-chat-v2",
+            value="ibm/granite-3-2b-instruct",
             info="Select the watsonx.ai model to use",
             required=True,
         ),
@@ -81,7 +82,7 @@ class WatsonxComponent(Component):
             required=False
         ),
     ]
-    
+
     outputs = [
         Output(
             name="language_model",
@@ -96,7 +97,7 @@ class WatsonxComponent(Component):
             method="build_message",
         ),
     ]
-    
+
     def build_model(self) -> LanguageModel:
         """
         Build a callable tool (LanguageModel) for IBM watsonx.ai.
@@ -106,26 +107,26 @@ class WatsonxComponent(Component):
             try:
                 t = float(temperature) if temperature is not None else (float(self.temperature) if self.temperature else 0.7)
                 tokens = int(max_tokens) if max_tokens is not None else (int(self.max_tokens) if self.max_tokens else 1024)
-                
+
                 # Properly extract secret values
                 api_key = self.api_key
                 endpoint = self.endpoint
-                
+
                 # Create credentials and API client, then set the default project
                 credentials = Credentials(api_key=api_key, url=endpoint)
 
-                
+
                 # Create client with credentials
                 client = APIClient(credentials)
                 client.set.default_project(self.project_id)
-                
+
                 model_id = self.model_id
                 model_params = {
                     "max_new_tokens": tokens,
                     "time_limit": 1000,
                 }
                 verify = False
-                
+
                 # Instantiate the ModelInference with credentials
                 model = ModelInference(
                     model_id=model_id,
@@ -134,17 +135,21 @@ class WatsonxComponent(Component):
                     project_id=self.project_id,
                     verify=verify,
                 )
-                
+
                 # Always use streaming.
                 final_text = ""
-                result_iter = model.chat(messages=prompt)
-                for chunk in result_iter:
-                    final_text += chunk.generated_text
-                return final_text
+                prompt_formatted = [
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": prompt}
+                ]
+                result_iter = model.chat(messages=prompt_formatted)
+                # for chunk in result_iter:
+                #     final_text += chunk.generated_text
+                return result_iter['choices'][0]['message']['content']
             except Exception as e:
                 return f"Error: {str(e)}"
         return tool
-    
+
     def build_message(self) -> Message:
         """
         Build the component output as a Message object.
@@ -154,23 +159,23 @@ class WatsonxComponent(Component):
             # Properly extract secret values
             api_key = self.api_key
             endpoint = self.endpoint
-            
+
             # Create credentials and API client, then set the default project
             credentials = Credentials(api_key=api_key, url=endpoint)
             client = APIClient(credentials)
             client.set.default_project(self.project_id)
-            
+
             model_id = self.model_id
             prompt = self.prompt
             t = float(self.temperature) if self.temperature else 0.7
             tokens = int(self.max_tokens) if self.max_tokens else 1024
-            
+
             model_params = {
                 "max_new_tokens": tokens,
                 "time_limit": 1000,
             }
             verify = False
-            
+
             # Instantiate the Model with credentials
             model = ModelInference(
                 model_id=model_id,
@@ -179,12 +184,16 @@ class WatsonxComponent(Component):
                 project_id=self.project_id,
                 verify=verify,
             )
-            
+
             # Always use streaming.
             final_text = ""
-            result_iter = model.chat(messages=prompt)
-            for chunk in result_iter:
-                final_text += chunk.generated_text
-            return Message(text=final_text)
+            prompt_formatted = [
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ]
+            result_iter = model.chat(messages=prompt_formatted)
+            # for chunk in result_iter:
+            #     final_text += chunk.generated_text
+            return Message(text=result_iter['choices'][0]['message']['content'])
         except Exception as e:
             return Message(text=f"Error: {str(e)}")
