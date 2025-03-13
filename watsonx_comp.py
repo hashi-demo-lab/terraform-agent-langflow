@@ -3,6 +3,7 @@ from langflow.custom import Component
 from langflow.io import MultilineInput, SecretStrInput, DropdownInput, Output, BoolInput
 from langflow.schema import Data
 from langflow.field_typing import LanguageModel
+from langflow.field_typing.range_spec import RangeSpec
 from langflow.schema.message import Message
 
 # Make sure these IBM libraries are installed
@@ -56,13 +57,12 @@ class WatsonxComponent(Component):
             info="Select the watsonx.ai model to use",
             required=True,
         ),
-        DropdownInput(
+        SliderInput(
             name="temperature",
             display_name="Temperature",
-            options=["0.5", "0.7", "0.9"],
-            value="0.7",
-            info="Controls randomness",
-            required=False,
+            value=0.1,
+            info="Run inference with this temperature. Must by in the closed interval [0.0, 1.0].",
+            range_spec=RangeSpec(min=0, max=1, step=0.01),
         ),
         DropdownInput(
             name="max_tokens",
