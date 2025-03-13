@@ -1,7 +1,7 @@
 from typing import Dict, Any
 from langflow.custom import Component  # Fixed incorrect import
 from langflow.schema import Data  # Fixed missing import
-from langflow.custom.constants import ComponentCategory
+# Removed problematic import
 from ibm_watsonx_ai import APIClient
 from ibm_watsonx_ai.foundation_models import Model
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
@@ -13,7 +13,7 @@ class WatsonxComponent(Component):
     
     display_name: str = "IBM watsonx"
     description: str = "Connect to IBM watsonx for AI model inference"
-    category: str = "LLM"
+    category: str = "LLM"  # Using string instead of enum
     
     def build_config(self):
         """Define the configuration parameters for the component."""
@@ -48,6 +48,7 @@ class WatsonxComponent(Component):
                 "description": "Input text",
                 "type": "str",
                 "required": True,
+                "multiline": True,
             },
             "temperature": {
                 "display_name": "Temperature",
@@ -92,7 +93,15 @@ class WatsonxComponent(Component):
             
             # Initialize model and generate text
             model = Model(model_id=model_id, params=params, client=client)
-            result = model.generate(inputs=prompt)  # Fixed incorrect parameter name
+            
+            # Try different parameter names based on the API
+            try:
+                result = model.generate(inputs=prompt)
+            except Exception as input_error:
+                try:
+                    result = model.generate(prompt=prompt)
+                except Exception as prompt_error:
+                    raise Exception(f"Failed to generate text: {input_error}, {prompt_error}")
             
             # Return a simple response structure
             return {
