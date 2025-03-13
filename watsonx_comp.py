@@ -1,6 +1,6 @@
 from typing import Any, Dict
 from langflow.custom import Component
-from langflow.io import MultilineInput, SecretStrInput, DropdownInput, Output, BoolInput
+from langflow.io import MultilineInput, SecretStrInput, DropdownInput, Output, BoolInput, SliderInput
 from langflow.schema import Data
 from langflow.field_typing import LanguageModel
 from langflow.field_typing.range_spec import RangeSpec
@@ -61,13 +61,13 @@ class WatsonxComponent(Component):
             name="temperature",
             display_name="Temperature",
             value=0.1,
-            info="Run inference with this temperature. Must by in the closed interval [0.0, 1.0].",
+            info="Run inference with this temperature. Must be in the closed interval [0.0, 1.0].",
             range_spec=RangeSpec(min=0, max=1, step=0.01),
         ),
         DropdownInput(
             name="max_tokens",
             display_name="Max Tokens",
-            options=["512", "1024", "2048"],
+            options=["512", "1024", "2048", "4096"],
             value="1024",
             info="Maximum tokens to generate",
             required=False,
@@ -99,6 +99,7 @@ class WatsonxComponent(Component):
     def build_model(self) -> LanguageModel:
         """
         Build a callable tool (LanguageModel) for IBM watsonx.ai.
+        Always streams the output.
         """
         def tool(prompt: str, temperature: float = None, max_tokens: int = None) -> str:
             try:
@@ -114,8 +115,13 @@ class WatsonxComponent(Component):
                     "temperature": t,
                 }
                 model_instance = Model(model_id=model_id, params=model_params, client=client)
-                result = model_instance.generate(inputs=prompt)
-                return result.generated_text
+                
+                # Always use streaming
+                final_text = ""
+                result_iter = model_instance.generate(inputs=prompt, stream=True)
+                for chunk in result_iter:
+                    final_text += chunk.generated_text
+                return final_text
             except Exception as e:
                 return f"Error: {str(e)}"
         return tool
@@ -123,6 +129,7 @@ class WatsonxComponent(Component):
     def build_message(self) -> Message:
         """
         Build the component output as a Message object.
+        Always streams the output.
         """
         try:
             api_key = self.api_key.get_secret_value() if hasattr(self.api_key, "get_secret_value") else self.api_key
@@ -138,8 +145,12 @@ class WatsonxComponent(Component):
                 "temperature": t,
             }
             model_instance = Model(model_id=model_id, params=model_params, client=client)
-            result = model_instance.generate(inputs=prompt)
-
-            return Message(text=result.generated_text)
+            
+            # Always use streaming
+            final_text = ""
+            result_iter = model_instance.generate(inputs=prompt, stream=True)
+            for chunk in result_iter:
+                final_text += chunk.generated_text
+            return Message(text=final_text)
         except Exception as e:
             return Message(text=f"Error: {str(e)}")
