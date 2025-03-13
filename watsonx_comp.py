@@ -7,13 +7,11 @@ from langflow.schema.message import Message
 
 # Make sure these IBM libraries are installed
 try:
-    from ibm_watsonx_ai import APIClient
+    from ibm_watsonx_ai import APIClient, Credentials
     from ibm_watsonx_ai.foundation_models import Model
-    from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 except ImportError:
     raise ImportError(
-        "IBM Watson libraries not found. Please install them with: "
-        "pip install ibm-watson-watsonx-ai ibm-cloud-sdk-core"
+        "IBM Watson libraries not found. Please install them with: pip install ibm-watson-watsonx-ai"
     )
 
 class WatsonxComponent(Component):
@@ -22,7 +20,7 @@ class WatsonxComponent(Component):
     """
     display_name = "IBM watsonx.ai"
     description = "Connect to IBM watsonx.ai for AI model inference"
-    icon = "IBM"
+    icon = "./assets/watsonx.svg"
     documentation = "https://cloud.ibm.com/apidocs/watsonx"
     name = "WatsonxComponent"
     
@@ -32,6 +30,13 @@ class WatsonxComponent(Component):
             display_name="API Key",
             info="IBM Cloud API Key",
             required=True,
+        ),
+        SecretStrInput(
+            name="endpoint",
+            display_name="Endpoint URL",
+            info="Region endpoint URL for IBM watsonx.ai",
+            required=True,
+            value="https://us-south.ml.cloud.ibm.com"
         ),
         MultilineInput(
             name="prompt",
@@ -49,12 +54,6 @@ class WatsonxComponent(Component):
             ],
             value="ibm/granite-13b-chat-v2",
             info="Select the watsonx.ai model to use",
-            required=True,
-        ),
-        SecretStrInput(
-            name="project_id",
-            display_name="Project ID",
-            info="IBM watsonx.ai Project ID",
             required=True,
         ),
         DropdownInput(
@@ -75,7 +74,7 @@ class WatsonxComponent(Component):
         ),
         BoolInput(
             name="enable_tools",
-            display_name="Enable Tools Mode",
+            display_name="Enable Tool Models",
             info="Toggle to enable additional tool support",
             value=False,
             required=False
@@ -106,11 +105,10 @@ class WatsonxComponent(Component):
                 t = float(temperature) if temperature is not None else float(self.temperature) if self.temperature else 0.7
                 tokens = int(max_tokens) if max_tokens is not None else int(self.max_tokens) if self.max_tokens else 1024
                 api_key = self.api_key.get_secret_value() if hasattr(self.api_key, "get_secret_value") else self.api_key
-                project_id = self.project_id
+                endpoint = self.endpoint.get_secret_value() if hasattr(self.endpoint, "get_secret_value") else self.endpoint
+                credentials = Credentials(url=endpoint, api_key=api_key)
+                client = APIClient(credentials)
                 model_id = self.model_id
-                authenticator = IAMAuthenticator(api_key)
-                client = APIClient(authenticator=authenticator)
-                client.set_default_project(project_id)
                 model_params = {
                     "max_new_tokens": tokens,
                     "temperature": t,
@@ -128,15 +126,13 @@ class WatsonxComponent(Component):
         """
         try:
             api_key = self.api_key.get_secret_value() if hasattr(self.api_key, "get_secret_value") else self.api_key
-            project_id = self.project_id
+            endpoint = self.endpoint.get_secret_value() if hasattr(self.endpoint, "get_secret_value") else self.endpoint
+            credentials = Credentials(url=endpoint, api_key=api_key)
+            client = APIClient(credentials)
             model_id = self.model_id
             prompt = self.prompt
             t = float(self.temperature) if self.temperature else 0.7
             tokens = int(self.max_tokens) if self.max_tokens else 1024
-
-            authenticator = IAMAuthenticator(api_key)
-            client = APIClient(authenticator=authenticator)
-            client.set_default_project(project_id)
             model_params = {
                 "max_new_tokens": tokens,
                 "temperature": t,
