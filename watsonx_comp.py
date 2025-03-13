@@ -145,6 +145,7 @@ class WatsonxComponent(Component):
                 # Always use streaming.
                 final_text = ""
                 prompt_formatted = [
+                    {"role": "control", "content": "thinking"},
                     {"role": "system", "content": self.system_prompt},
                     {"role": "user", "content": prompt}
                 ]
@@ -194,6 +195,7 @@ class WatsonxComponent(Component):
             # Always use streaming.
             final_text = ""
             prompt_formatted = [
+                {"role": "control", "content": "thinking"},
                 {"role": "system", "content": self.system_prompt},
                 {"role": "user", "content": prompt}
             ]
