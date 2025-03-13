@@ -5,15 +5,9 @@ from langflow.schema import Data
 from langflow.field_typing import LanguageModel
 from langflow.field_typing.range_spec import RangeSpec
 from langflow.schema.message import Message
-
-# Make sure these IBM libraries are installed
-try:
-    from ibm_watsonx_ai import APIClient, Credentials
-    from ibm_watsonx_ai.foundation_models import Model
-except ImportError:
-    raise ImportError(
-        "IBM Watson libraries not found. Please install them with: pip install ibm-watson-watsonx-ai"
-    )
+from ibm_watsonx_ai import APIClient, Credentials
+from ibm_watsonx_ai.foundation_models import Model
+#IBM Watson libraries not found. Please install them with: pip install ibm-watson-watsonx-ai
 
 class WatsonxComponent(Component):
     """
@@ -116,7 +110,7 @@ class WatsonxComponent(Component):
                 }
                 model_instance = Model(model_id=model_id, params=model_params, client=client)
                 
-                # Always use streaming
+                # Always use streaming.
                 final_text = ""
                 result_iter = model_instance.generate(inputs=prompt, stream=True)
                 for chunk in result_iter:
@@ -146,7 +140,7 @@ class WatsonxComponent(Component):
             }
             model_instance = Model(model_id=model_id, params=model_params, client=client)
             
-            # Always use streaming
+            # Always use streaming.
             final_text = ""
             result_iter = model_instance.generate(inputs=prompt, stream=True)
             for chunk in result_iter:
