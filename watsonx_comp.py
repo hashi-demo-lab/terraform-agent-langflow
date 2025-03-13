@@ -137,7 +137,7 @@ class WatsonxComponent(Component):
                 
                 # Always use streaming.
                 final_text = ""
-                result_iter = model.chat(prompt=prompt, stream=True)
+                result_iter = model.chat(messages=prompt, stream=True)
                 for chunk in result_iter:
                     final_text += chunk.generated_text
                 return final_text
@@ -182,7 +182,7 @@ class WatsonxComponent(Component):
             
             # Always use streaming.
             final_text = ""
-            result_iter = model.chat(prompt=prompt, stream=True)
+            result_iter = model.chat(messages=prompt, stream=True)
             for chunk in result_iter:
                 final_text += chunk.generated_text
             return Message(text=final_text)
