@@ -108,7 +108,7 @@ class WatsonxComponent(Component):
                     "max_new_tokens": tokens,
                     "temperature": t,
                 }
-                model_instance = Model(model_id=model_id, params=model_params, client=client)
+                model_instance = Model(model_id=model_id, params=model_params, credentials=client)
                 
                 # Always use streaming.
                 final_text = ""
@@ -138,7 +138,7 @@ class WatsonxComponent(Component):
                 "max_new_tokens": tokens,
                 "temperature": t,
             }
-            model_instance = Model(model_id=model_id, params=model_params, client=client)
+            model_instance = Model(model_id=model_id, params=model_params, credentials=client)
             
             # Always use streaming.
             final_text = ""
