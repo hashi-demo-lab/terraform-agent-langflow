@@ -48,7 +48,7 @@ class WatsonxComponent(Component):
         ),
         MultilineInput(
             name="system_prompt",
-            display_name="SystemPrompt",
+            display_name="System Prompt",
             info="Input text",
             required=True,
             value="You are a helpful assistant."
