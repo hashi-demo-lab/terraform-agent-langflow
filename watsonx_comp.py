@@ -65,13 +65,6 @@ class WatsonxComponent(Component):
             info="Select the watsonx.ai model to use",
             required=True,
         ),
-        SliderInput(
-            name="temperature",
-            display_name="Temperature",
-            value=0.1,
-            info="Run inference with this temperature. Must be in the closed interval [0.0, 1.0].",
-            range_spec=RangeSpec(min=0, max=1, step=0.01),
-        ),
         DropdownInput(
             name="max_tokens",
             display_name="Max Tokens",
@@ -111,7 +104,6 @@ class WatsonxComponent(Component):
         """
         def tool(prompt: str, temperature: float = None, max_tokens: int = None) -> str:
             try:
-                t = float(temperature) if temperature is not None else (float(self.temperature) if self.temperature else 0.7)
                 tokens = int(max_tokens) if max_tokens is not None else (int(self.max_tokens) if self.max_tokens else 1024)
 
                 # Properly extract secret values
@@ -120,7 +112,6 @@ class WatsonxComponent(Component):
 
                 # Create credentials and API client, then set the default project
                 credentials = Credentials(api_key=api_key, url=endpoint)
-
 
                 # Create client with credentials
                 client = APIClient(credentials)
@@ -174,7 +165,7 @@ class WatsonxComponent(Component):
 
             model_id = self.model_id
             prompt = self.prompt
-            t = float(self.temperature) if self.temperature else 0.7
+
             tokens = int(self.max_tokens) if self.max_tokens else 1024
 
             model_params = {
