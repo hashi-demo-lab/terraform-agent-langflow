@@ -53,6 +53,7 @@ class WatsonxComponent(Component):
                 "ibm/granite-13b-chat-v2",
                 "ibm/granite-20b-code-instruct-v1",
                 "meta-llama/llama-2-70b-chat",
+                "ibm-granite/granite-20b-code-instruct"
             ],
             value="ibm/granite-13b-chat-v2",
             info="Select the watsonx.ai model to use",
@@ -113,11 +114,11 @@ class WatsonxComponent(Component):
                 
                 # Create credentials and API client, then set the default project
                 credentials = Credentials(api_key=api_key, url=endpoint)
-                client.set.default_project(self.project_id)
+
                 
                 # Create client with credentials
                 client = APIClient(credentials)
-                client.set.default_project(project_id)
+                client.set.default_project(self.project_id)
                 
                 model_id = self.model_id
                 model_params = {
@@ -126,7 +127,7 @@ class WatsonxComponent(Component):
                 }
                 
                 # Instantiate the Model with credentials
-                model_instance = Model(model_id=model_id, params=model_params, credentials=credentials)
+                model_instance = Model(model_id=model_id, params=model_params, credentials=credentials, project_id=self.project_id)
                 
                 # Always use streaming.
                 final_text = ""
@@ -164,7 +165,7 @@ class WatsonxComponent(Component):
             }
             
             # Instantiate the Model with credentials
-            model_instance = Model(model_id=model_id, params=model_params, credentials=credentials)
+            model_instance = Model(model_id=model_id, params=model_params, credentials=credentials, project_id=self.project_id)
             
             # Always use streaming.
             final_text = ""
