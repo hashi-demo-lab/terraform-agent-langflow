@@ -117,7 +117,7 @@ class WatsonxComponent(Component):
                 
                 # Create client with credentials
                 client = APIClient(credentials)
-                client.set_default_project(project_id)
+                client.set.default_project(project_id)
                 
                 model_id = self.model_id
                 model_params = {
