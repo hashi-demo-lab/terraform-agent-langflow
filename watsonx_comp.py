@@ -38,7 +38,7 @@ class WatsonxComponent(Component):
             display_name="Project ID",
             info="IBM Watsonx.ai Project ID",
             required=True,
-            value="e53c3043-b36c-426b-8200-c7429461a2f3"
+            value="76673d5e-76e3-428c-9134-f8975dead5d4"
         ),
         MultilineInput(
             name="prompt",
