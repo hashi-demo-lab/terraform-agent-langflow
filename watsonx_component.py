@@ -1,18 +1,19 @@
 from typing import Dict, Any
 from langflow.custom import Component  # Fixed incorrect import
 from langflow.schema import Data  # Fixed missing import
+from langflow.custom.constants import ComponentCategory
 from ibm_watsonx_ai import APIClient
 from ibm_watsonx_ai.foundation_models import Model
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
-class WatsonxComponent(CustomComponent):
+class WatsonxComponent(Component):
     """
     A simplified Langflow component for IBM watsonx integration.
     """
     
     display_name: str = "IBM watsonx"
     description: str = "Connect to IBM watsonx for AI model inference"
-    category: ComponentCategory.LLM
+    category: str = "LLM"
     
     def build_config(self):
         """Define the configuration parameters for the component."""
