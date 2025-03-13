@@ -46,15 +46,22 @@ class WatsonxComponent(Component):
             info="Input text",
             required=True,
         ),
+        MultilineInput(
+            name="system_prompt",
+            display_name="SystemPrompt",
+            info="Input text",
+            required=True,
+            value="You are a helpful assistant."
+        ),
         DropdownInput(
             name="model_id",
             display_name="Model ID",
             options=[
                 "ibm/granite-3-2-8b-instruct",
                 "meta-llama/llama-3-3-70b-instruct",
-                "ibm/granite-34b-code-instruct",
+                "ibm/granite-34b-code-instruct"
             ],
-            value="ibm/granite-3-2b-instruct",
+            value="ibm/granite-3-2-8b-instruct",
             info="Select the watsonx.ai model to use",
             required=True,
         ),
@@ -134,10 +141,11 @@ class WatsonxComponent(Component):
                     project_id=self.project_id,
                     verify=verify,
                 )
-                
+
+                # Always use streaming.
                 final_text = ""
                 prompt_formatted = [
-                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "system", "content": self.system_prompt},
                     {"role": "user", "content": prompt}
                 ]
                 result_iter = model.chat(messages=prompt_formatted)
@@ -145,7 +153,7 @@ class WatsonxComponent(Component):
                 #     final_text += chunk.generated_text
                 return result_iter['choices'][0]['message']['content']
             except Exception as e:
-                return f"Error: {(e)}"
+                return f"Error: {str(e)}"
         return tool
 
     def build_message(self) -> Message:
@@ -186,7 +194,7 @@ class WatsonxComponent(Component):
             # Always use streaming.
             final_text = ""
             prompt_formatted = [
-                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "system", "content": self.system_prompt},
                 {"role": "user", "content": prompt}
             ]
             result_iter = model.chat(messages=prompt_formatted)
@@ -194,4 +202,4 @@ class WatsonxComponent(Component):
             #     final_text += chunk.generated_text
             return Message(text=result_iter['choices'][0]['message']['content'])
         except Exception as e:
-            return Message(text=f"Error: {(e)}")
+            return Message(text=f"Error: {str(e)}")
