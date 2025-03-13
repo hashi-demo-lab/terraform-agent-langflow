@@ -153,7 +153,7 @@ class WatsonxComponent(Component):
                 #     final_text += chunk.generated_text
                 return result_iter['choices'][0]['message']['content']
             except Exception as e:
-                return f"Error: {str(e)}"
+                return f"Error: {e}"
         return tool
 
     def build_message(self) -> Message:
@@ -202,4 +202,4 @@ class WatsonxComponent(Component):
             #     final_text += chunk.generated_text
             return Message(text=result_iter['choices'][0]['message']['content'])
         except Exception as e:
-            return Message(text=f"Error: {str(e)}")
+            return f"Error: {e}"
