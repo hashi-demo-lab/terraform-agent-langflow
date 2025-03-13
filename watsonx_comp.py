@@ -20,7 +20,7 @@ class WatsonxComponent(Component):
     """
     display_name = "IBM watsonx.ai"
     description = "Connect to IBM watsonx.ai for AI model inference"
-    icon = "./assets/watsonx.svg"
+    icon = "assets/images/watsonx.svg"
     documentation = "https://cloud.ibm.com/apidocs/watsonx"
     name = "WatsonxComponent"
     
