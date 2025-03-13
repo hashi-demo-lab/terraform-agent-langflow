@@ -151,7 +151,7 @@ class WatsonxComponent(Component):
             # Create credentials and API client, then set the default project
             credentials = Credentials(api_key=api_key, url=endpoint)
             client = APIClient(credentials)
-            client.set_default_project(self.project_id)
+            client.set.default_project(self.project_id)
             
             model_id = self.model_id
             prompt = self.prompt
