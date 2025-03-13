@@ -6,7 +6,7 @@ from langflow.field_typing import LanguageModel
 from langflow.field_typing.range_spec import RangeSpec
 from langflow.schema.message import Message
 from ibm_watsonx_ai import APIClient, Credentials
-from ibm_watsonx_ai.foundation_models import Model
+from ibm_watsonx_ai.foundation_models import ModelInference
 #IBM Watson libraries not found. Please install them with: pip install ibm-watson-watsonx-ai
 
 class WatsonxComponent(Component):
@@ -50,10 +50,9 @@ class WatsonxComponent(Component):
             name="model_id",
             display_name="Model ID",
             options=[
-                "ibm/granite-13b-chat-v2",
-                "ibm/granite-20b-code-instruct-v1",
-                "meta-llama/llama-2-70b-chat",
-                "ibm-granite/granite-20b-code-instruct"
+                "ibm/granite-3-2-8b-instruct",
+                "meta-llama/llama-3-3-70b-instruct",
+                "ibm/granite-34b-code-instruct"
             ],
             value="ibm/granite-13b-chat-v2",
             info="Select the watsonx.ai model to use",
@@ -123,15 +122,22 @@ class WatsonxComponent(Component):
                 model_id = self.model_id
                 model_params = {
                     "max_new_tokens": tokens,
-                    "temperature": t,
+                    "time_limit": 1000,
                 }
+                verify = False
                 
-                # Instantiate the Model with credentials
-                model_instance = Model(model_id=model_id, params=model_params, credentials=credentials, project_id=self.project_id)
+                # Instantiate the ModelInference with credentials
+                model = ModelInference(
+                    model_id=model_id,
+                    api_client=client,
+                    params=model_params,
+                    project_id=self.project_id,
+                    verify=verify,
+                )
                 
                 # Always use streaming.
                 final_text = ""
-                result_iter = model_instance.generate(prompt=prompt, stream=True)
+                result_iter = model.chat(prompt=prompt, stream=True)
                 for chunk in result_iter:
                     final_text += chunk.generated_text
                 return final_text
@@ -161,15 +167,22 @@ class WatsonxComponent(Component):
             
             model_params = {
                 "max_new_tokens": tokens,
-                "temperature": t,
+                "time_limit": 1000,
             }
+            verify = False
             
             # Instantiate the Model with credentials
-            model_instance = Model(model_id=model_id, params=model_params, credentials=credentials, project_id=self.project_id)
+            model = ModelInference(
+                model_id=model_id,
+                api_client=client,
+                params=model_params,
+                project_id=self.project_id,
+                verify=verify,
+            )
             
             # Always use streaming.
             final_text = ""
-            result_iter = model_instance.generate(prompt=prompt, stream=True)
+            result_iter = model.chat(prompt=prompt, stream=True)
             for chunk in result_iter:
                 final_text += chunk.generated_text
             return Message(text=final_text)
