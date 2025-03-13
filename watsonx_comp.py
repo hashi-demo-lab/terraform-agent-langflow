@@ -1,6 +1,6 @@
 from typing import Any, Dict
 from langflow.custom import Component
-from langflow.io import MultilineInput, SecretStrInput, DropdownInput, Output, BoolInput, SliderInput
+from langflow.io import MultilineInput, MessageTextInput, SecretStrInput, DropdownInput, Output, BoolInput, SliderInput
 from langflow.schema import Data
 from langflow.field_typing import LanguageModel
 from langflow.field_typing.range_spec import RangeSpec
@@ -26,12 +26,19 @@ class WatsonxComponent(Component):
             info="IBM Cloud API Key",
             required=True,
         ),
-        SecretStrInput(
+        MessageTextInput(
             name="endpoint",
             display_name="Endpoint URL",
             info="Region endpoint URL for IBM watsonx.ai",
             required=True,
             value="https://us-south.ml.cloud.ibm.com"
+        ),
+        MessageTextInput(
+            name="project_id",
+            display_name="Project ID",
+            info="IBM Watsonx.ai Project ID",
+            required=True,
+            value="e53c3043-b36c-426b-8200-c7429461a2f3"
         ),
         MultilineInput(
             name="prompt",
@@ -97,22 +104,33 @@ class WatsonxComponent(Component):
         """
         def tool(prompt: str, temperature: float = None, max_tokens: int = None) -> str:
             try:
-                t = float(temperature) if temperature is not None else float(self.temperature) if self.temperature else 0.7
-                tokens = int(max_tokens) if max_tokens is not None else int(self.max_tokens) if self.max_tokens else 1024
-                api_key = self.api_key.get_secret_value() if hasattr(self.api_key, "get_secret_value") else self.api_key
-                endpoint = self.endpoint.get_secret_value() if hasattr(self.endpoint, "get_secret_value") else self.endpoint
-                credentials = Credentials(url=endpoint, api_key=api_key)
+                t = float(temperature) if temperature is not None else (float(self.temperature) if self.temperature else 0.7)
+                tokens = int(max_tokens) if max_tokens is not None else (int(self.max_tokens) if self.max_tokens else 1024)
+                
+                # Properly extract secret values
+                api_key = self.api_key
+                endpoint = self.endpoint
+                
+                # Create credentials and API client, then set the default project
+                credentials = Credentials(api_key=api_key, url=endpoint)
+                client.set.default_project(self.project_id)
+                
+                # Create client with credentials
                 client = APIClient(credentials)
+                client.set_default_project(project_id)
+                
                 model_id = self.model_id
                 model_params = {
                     "max_new_tokens": tokens,
                     "temperature": t,
                 }
-                model_instance = Model(model_id=model_id, params=model_params, credentials=client)
+                
+                # Instantiate the Model with credentials
+                model_instance = Model(model_id=model_id, params=model_params, credentials=credentials)
                 
                 # Always use streaming.
                 final_text = ""
-                result_iter = model_instance.generate(inputs=prompt, stream=True)
+                result_iter = model_instance.generate(prompt=prompt, stream=True)
                 for chunk in result_iter:
                     final_text += chunk.generated_text
                 return final_text
@@ -126,23 +144,31 @@ class WatsonxComponent(Component):
         Always streams the output.
         """
         try:
-            api_key = self.api_key.get_secret_value() if hasattr(self.api_key, "get_secret_value") else self.api_key
-            endpoint = self.endpoint.get_secret_value() if hasattr(self.endpoint, "get_secret_value") else self.endpoint
-            credentials = Credentials(url=endpoint, api_key=api_key)
+            # Properly extract secret values
+            api_key = self.api_key
+            endpoint = self.endpoint
+            
+            # Create credentials and API client, then set the default project
+            credentials = Credentials(api_key=api_key, url=endpoint)
             client = APIClient(credentials)
+            client.set_default_project(self.project_id)
+            
             model_id = self.model_id
             prompt = self.prompt
             t = float(self.temperature) if self.temperature else 0.7
             tokens = int(self.max_tokens) if self.max_tokens else 1024
+            
             model_params = {
                 "max_new_tokens": tokens,
                 "temperature": t,
             }
-            model_instance = Model(model_id=model_id, params=model_params, credentials=client)
+            
+            # Instantiate the Model with credentials
+            model_instance = Model(model_id=model_id, params=model_params, credentials=credentials)
             
             # Always use streaming.
             final_text = ""
-            result_iter = model_instance.generate(inputs=prompt, stream=True)
+            result_iter = model_instance.generate(prompt=prompt, stream=True)
             for chunk in result_iter:
                 final_text += chunk.generated_text
             return Message(text=final_text)
