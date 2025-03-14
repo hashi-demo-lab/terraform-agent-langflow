@@ -45,13 +45,10 @@ class WatsonxComponent(LCModelComponent):
             name="model_id",
             display_name="Model ID",
             options=[
-                "ibm/granite-3-8b-instruct",
                 "ibm/granite-3-2-8b-instruct",
-                "meta-llama/llama-3-3-70b-instruct",
-                "mistralai/mistral-large",
-                "ibm/granite-20b-code-instruct"
+                "meta-llama/llama-3-3-70b-instruct"
             ],
-            value="ibm/granite-3-8b-instruct",
+            value="ibm/granite-3-2-8b-instruct",
             info="Select the watsonx.ai model to use",
             required=True,
         ),
