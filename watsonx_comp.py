@@ -98,22 +98,24 @@ class WatsonxComponent(Component):
 
     def build_model(self) -> LanguageModel:
             api_key = self.api_key
-            temperature = self.temperature
-            model_name: str = self.model_id
-            max_tokens = self.max_tokens
-            model_kwargs = self.model_kwargs or {}
-            base_url = self.endpoint
-            json_mode = self.json_mode
-            seed = self.seed
+            endpoint = self.endpoint
+            model_id = self.model_id
+            model_params = {
+                "max_new_tokens": tokens,
+                "time_limit": 1000,
+            }
+
+            # Create credentials and API client, then set the default project
+            credentials = Credentials(api_key=api_key, url=endpoint)
+            client = APIClient(credentials)
+            client.set.default_project(self.project_id)
 
             output = ChatWatsonx(
-                max_tokens=max_tokens or None,
-                model_kwargs=model_kwargs,
-                model=model_name,
-                base_url=base_url,
-                api_key=api_key,
-                temperature=temperature if temperature is not None else 0.1,
-                seed=seed,
+                model_id=model_id,
+                watsonx_client=client, 
+                params=model_params,
+                project_id=self.project_id,
+                url=endpoint
             )
 
             if json_mode:
