@@ -58,7 +58,7 @@ class WatsonxComponent(Component):
             options=[
                 "ibm/granite-3-2-8b-instruct",
                 "meta-llama/llama-3-3-70b-instruct",
-                "ibm/granite-34b-code-instruct"
+                "mistralai/mistral-large"
             ],
             value="ibm/granite-3-2-8b-instruct",
             info="Select the watsonx.ai model to use",
