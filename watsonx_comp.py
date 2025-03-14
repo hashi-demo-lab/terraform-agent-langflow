@@ -140,7 +140,7 @@ class WatsonxComponent(Component):
                 ]
                 
                 # The control message was causing issues, so it's removed
-                result = model.invoke(prompt_formatted)  # Fixed: chat -> invoke and removed streaming
+                result = model.bind_tools(prompt_formatted)  # Fixed: chat -> invoke and removed streaming
                 
                 # Return the content from the response
                 return result.content  # Fixed: accessing content from the response object
