@@ -80,8 +80,7 @@ class WatsonxComponent(Component):
             info="Toggle to enable additional tool support",
             value=False,
             required=False
-            real_time_refresh=True
-        ),
+        )
     ]
 
     outputs = [
