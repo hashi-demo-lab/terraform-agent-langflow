@@ -36,6 +36,7 @@ ollama run qwq
 ```zsh
 source langflow/bin/activate
 uv pip install ibm-watsonx-ai
+uv pip install langchain-ibm
 uv pip install --upgrade ibm-cloud-sdk-core
 ```
 
