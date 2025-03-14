@@ -100,6 +100,8 @@ class WatsonxComponent(Component):
             api_key = self.api_key
             endpoint = self.endpoint
             model_id = self.model_id
+            tokens = int(self.max_tokens) if self.max_tokens else 1024
+            
             model_params = {
                 "max_new_tokens": tokens,
                 "time_limit": 1000,
