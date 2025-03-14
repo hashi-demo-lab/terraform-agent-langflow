@@ -97,56 +97,29 @@ class WatsonxComponent(Component):
     ]
 
     def build_model(self) -> LanguageModel:
-        """
-        Build a callable tool (LanguageModel) for IBM watsonx.ai.
-        Always streams the output.
-        """
-        def tool(prompt: str, temperature: float = None, max_tokens: int = None) -> str:
-            try:
-                tokens = int(max_tokens) if max_tokens is not None else (int(self.max_tokens) if self.max_tokens else 1024)
+            api_key = self.api_key
+            temperature = self.temperature
+            model_name: str = self.model_name
+            max_tokens = self.max_tokens
+            model_kwargs = self.model_kwargs or {}
+            base_url = self.endpoint
+            json_mode = self.json_mode
+            seed = self.seed
 
-                # Properly extract secret values
-                api_key = self.api_key
-                endpoint = self.endpoint
+            output = ChatWatsonx(
+                max_tokens=max_tokens or None,
+                model_kwargs=model_kwargs,
+                model=model_name,
+                base_url=base_url,
+                api_key=api_key,
+                temperature=temperature if temperature is not None else 0.1,
+                seed=seed,
+            )
 
-                # Create credentials and API client, then set the default project
-                credentials = Credentials(api_key=api_key, url=endpoint)
+            if json_mode:
+                output = output.bind(response_format={"type": "json_object"})
 
-                # Create client with credentials
-                client = APIClient(credentials)
-                client.set.default_project(self.project_id)
-
-                model_id = self.model_id
-                model_params = {
-                    "max_new_tokens": tokens,
-                    "time_limit": 1000,
-                }
-                verify = False
-
-                # Instantiate the ModelInference with credentials
-                model = ChatWatsonx(
-                    model_id=model_id,
-                    watsonx_client=client,  # Fixed: api_client -> client
-                    params=model_params,
-                    project_id=self.project_id,
-                    url=endpoint,  # Added url parameter
-                    verify=verify,
-                )
-
-                # Use the correct method for sending messages
-                prompt_formatted = [
-                    {"role": "system", "content": self.system_prompt},
-                    {"role": "user", "content": prompt}
-                ]
-                
-                # The control message was causing issues, so it's removed
-                result = model.bind_tools(prompt_formatted)  # Fixed: chat -> invoke and removed streaming
-                
-                # Return the content from the response
-                return result.content  # Fixed: accessing content from the response object
-            except Exception as e:
-                return f"Error: {e}"
-        return tool
+            return output
 
     def build_message(self) -> Message:
         """

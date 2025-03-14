@@ -12,7 +12,7 @@ uv pip install langflow
 When running the command below there might be errors printed out. You may ignore these errors, LangFlow still works despite these.
 
 ```zsh
-uv run langflow run
+uv run langflow run --log-level debug
 ```
 ## Install Ollama
 
