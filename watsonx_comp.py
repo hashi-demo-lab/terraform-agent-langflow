@@ -7,6 +7,7 @@ from langflow.field_typing.range_spec import RangeSpec
 from langflow.schema.message import Message
 from ibm_watsonx_ai import APIClient, Credentials
 from ibm_watsonx_ai.foundation_models import ModelInference
+from langchain_ibm import ChatWatsonx
 #IBM Watson libraries not found. Please install them with: pip install ibm-watson-watsonx-ai
 
 class WatsonxComponent(Component):
