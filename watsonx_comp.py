@@ -118,9 +118,6 @@ class WatsonxComponent(Component):
                 url=endpoint
             )
 
-            if json_mode:
-                output = output.bind(response_format={"type": "json_object"})
-
             return output
 
     def build_message(self) -> Message:
