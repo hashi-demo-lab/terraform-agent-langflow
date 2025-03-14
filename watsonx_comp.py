@@ -6,9 +6,7 @@ from langflow.field_typing import LanguageModel
 from langflow.field_typing.range_spec import RangeSpec
 from langflow.schema.message import Message
 from ibm_watsonx_ai import APIClient, Credentials
-from ibm_watsonx_ai.foundation_models import ModelInference
 from langchain_ibm import ChatWatsonx
-#IBM Watson libraries not found. Please install them with: pip install ibm-watson-watsonx-ai
 
 class WatsonxComponent(Component):
     """
@@ -126,25 +124,26 @@ class WatsonxComponent(Component):
                 verify = False
 
                 # Instantiate the ModelInference with credentials
-                model = ModelInference(
+                model = ChatWatsonx(
                     model_id=model_id,
-                    api_client=client,
+                    watsonx_client=client,  # Fixed: api_client -> client
                     params=model_params,
                     project_id=self.project_id,
+                    url=endpoint,  # Added url parameter
                     verify=verify,
                 )
 
-                # Always use streaming.
-                final_text = ""
+                # Use the correct method for sending messages
                 prompt_formatted = [
-                    {"role": "control", "content": "thinking"},
                     {"role": "system", "content": self.system_prompt},
                     {"role": "user", "content": prompt}
                 ]
-                result_iter = model.chat(messages=prompt_formatted)
-                # for chunk in result_iter:
-                #     final_text += chunk.generated_text
-                return result_iter['choices'][0]['message']['content']
+                
+                # The control message was causing issues, so it's removed
+                result = model.invoke(prompt_formatted)  # Fixed: chat -> invoke and removed streaming
+                
+                # Return the content from the response
+                return result.content  # Fixed: accessing content from the response object
             except Exception as e:
                 return f"Error: {e}"
         return tool
@@ -176,24 +175,24 @@ class WatsonxComponent(Component):
             verify = False
 
             # Instantiate the Model with credentials
-            model = ModelInference(
+            model = ChatWatsonx(
                 model_id=model_id,
-                api_client=client,
+                watsonx_client=client,  # Fixed: api_client -> client
                 params=model_params,
                 project_id=self.project_id,
+                url=endpoint,  # Added url parameter
                 verify=verify,
             )
 
-            # Always use streaming.
-            final_text = ""
+            # Use the correct method for sending messages
             prompt_formatted = [
-                {"role": "control", "content": "thinking"},
                 {"role": "system", "content": self.system_prompt},
                 {"role": "user", "content": prompt}
             ]
-            result_iter = model.chat(messages=prompt_formatted)
-            # for chunk in result_iter:
-            #     final_text += chunk.generated_text
-            return Message(text=result_iter['choices'][0]['message']['content'])
+            
+            # Use proper invoke method and access response correctly
+            result = model.invoke(prompt_formatted)  # Fixed: chat -> invoke
+            
+            return Message(text=result.content)  # Fixed: accessing content from response object
         except Exception as e:
-            return Message(text=f"Error: {(e)}")
+            return Message(text=f"Error: {str(e)}")  # Fixed: proper string conversion for exception
