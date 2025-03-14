@@ -7,8 +7,10 @@ from langflow.field_typing.range_spec import RangeSpec
 from langflow.schema.message import Message
 from ibm_watsonx_ai import APIClient, Credentials
 from langchain_ibm import ChatWatsonx
+from langflow.base.models.model import LCModelComponent
 
-class WatsonxComponent(Component):
+
+class WatsonxComponent(LCModelComponent):
     """
     A Langflow component for IBM watsonx.ai integration.
     """
@@ -39,28 +41,17 @@ class WatsonxComponent(Component):
             required=True,
             value="76673d5e-76e3-428c-9134-f8975dead5d4"
         ),
-        MultilineInput(
-            name="prompt",
-            display_name="Prompt",
-            info="Input text",
-            required=True,
-        ),
-        MultilineInput(
-            name="system_prompt",
-            display_name="System Prompt",
-            info="Input text",
-            required=True,
-            value="You are a helpful assistant."
-        ),
         DropdownInput(
             name="model_id",
             display_name="Model ID",
             options=[
+                "ibm/granite-3-8b-instruct",
                 "ibm/granite-3-2-8b-instruct",
                 "meta-llama/llama-3-3-70b-instruct",
-                "mistralai/mistral-large"
+                "mistralai/mistral-large",
+                "ibm/granite-20b-code-instruct"
             ],
-            value="ibm/granite-3-2-8b-instruct",
+            value="ibm/granite-3-8b-instruct",
             info="Select the watsonx.ai model to use",
             required=True,
         ),
@@ -88,12 +79,6 @@ class WatsonxComponent(Component):
             info="Callable tool for IBM watsonx.ai model",
             method="build_model",
         ),
-        Output(
-            name="message",
-            display_name="Message",
-            info="Generated text as a Message",
-            method="build_message",
-        ),
     ]
 
     def build_model(self) -> LanguageModel:
@@ -104,7 +89,7 @@ class WatsonxComponent(Component):
             
             model_params = {
                 "max_new_tokens": tokens,
-                "time_limit": 1000,
+                "time_limit": 100000,
             }
 
             # Create credentials and API client, then set the default project
@@ -115,58 +100,9 @@ class WatsonxComponent(Component):
             output = ChatWatsonx(
                 model_id=model_id,
                 watsonx_client=client, 
-                params=model_params,
+                # params=model_params,
                 project_id=self.project_id,
                 url=endpoint
             )
 
             return output
-
-    def build_message(self) -> Message:
-        """
-        Build the component output as a Message object.
-        Always streams the output.
-        """
-        try:
-            # Properly extract secret values
-            api_key = self.api_key
-            endpoint = self.endpoint
-
-            # Create credentials and API client, then set the default project
-            credentials = Credentials(api_key=api_key, url=endpoint)
-            client = APIClient(credentials)
-            client.set.default_project(self.project_id)
-
-            model_id = self.model_id
-            prompt = self.prompt
-
-            tokens = int(self.max_tokens) if self.max_tokens else 1024
-
-            model_params = {
-                "max_new_tokens": tokens,
-                "time_limit": 1000,
-            }
-            verify = False
-
-            # Instantiate the Model with credentials
-            model = ChatWatsonx(
-                model_id=model_id,
-                watsonx_client=client,  # Fixed: api_client -> client
-                params=model_params,
-                project_id=self.project_id,
-                url=endpoint,  # Added url parameter
-                verify=verify,
-            )
-
-            # Use the correct method for sending messages
-            prompt_formatted = [
-                {"role": "system", "content": self.system_prompt},
-                {"role": "user", "content": prompt}
-            ]
-            
-            # Use proper invoke method and access response correctly
-            result = model.invoke(prompt_formatted)  # Fixed: chat -> invoke
-            
-            return Message(text=result.content)  # Fixed: accessing content from response object
-        except Exception as e:
-            return Message(text=f"Error: {str(e)}")  # Fixed: proper string conversion for exception
