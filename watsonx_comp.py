@@ -99,7 +99,7 @@ class WatsonxComponent(Component):
     def build_model(self) -> LanguageModel:
             api_key = self.api_key
             temperature = self.temperature
-            model_name: str = self.model_name
+            model_name: str = self.model_id
             max_tokens = self.max_tokens
             model_kwargs = self.model_kwargs or {}
             base_url = self.endpoint
