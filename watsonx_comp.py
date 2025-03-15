@@ -85,7 +85,7 @@ class WatsonxComponent(LCModelComponent):
             tokens = int(self.max_tokens) if self.max_tokens else 1024
             
             model_params = {
-                "time_limit": 100000,
+                "time_limit": 180000,
             }
 
             # Create credentials and API client, then set the default project
