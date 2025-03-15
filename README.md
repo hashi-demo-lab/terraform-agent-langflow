@@ -16,23 +16,6 @@ uv run langflow run --log-level debug
 ```
 *  Open LangFlow using the link output CMD + click
 
-## Install Ollama
-
-```zsh
-brew install ollama
-brew services start ollama
-```
-
-### Run qwen2.5 14b (smaller model for M1 mac)
-```zsh
-ollama run qwen2.5-coder:14b
-```
-
-
-### Run qwq
-```zsh
-ollama run qwq
-```
 
 ## install Watsonx-ai SDK
 ```zsh
@@ -56,6 +39,31 @@ uv add composio_core composio_openai
 uv add composio_langchain
 ```
 
+## install Terraform MCP server
+```zsh
+npm install -g npm@11.2.0
+npx -y terraform-mcp-server
+```
 
+## Optional - only required if using Local LLMs
+
+### Install Ollama
+
+```zsh
+brew install ollama
+brew services start ollama
+```
+
+### Run qwen2.5 14b (smaller model for M1 mac)
+
+```zsh
+ollama run qwen2.5-coder:14b
+```
+
+### Run qwq
+
+```zsh
+ollama run qwq
+```
 
 
