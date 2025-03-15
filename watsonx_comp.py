@@ -85,8 +85,7 @@ class WatsonxComponent(LCModelComponent):
             tokens = int(self.max_tokens) if self.max_tokens else 1024
             
             model_params = {
-                "max_new_tokens": tokens,
-                "time_limit": 100000,
+                "streaming": True
             }
 
             # Create credentials and API client, then set the default project
@@ -97,9 +96,10 @@ class WatsonxComponent(LCModelComponent):
             output = ChatWatsonx(
                 model_id=model_id,
                 watsonx_client=client, 
-                # params=model_params,
+                params=model_params,
                 project_id=self.project_id,
                 url=endpoint
+
             )
 
             return output
