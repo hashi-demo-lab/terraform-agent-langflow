@@ -16,19 +16,26 @@ from langflow.io import Output
 
 
 class ComposioAPIComponent(LCToolComponent):
-    display_name: str = "Composio Local Tools"
-    description: str = "Use Composio toolset to run actions with your agent"
+    display_name: str = "Composio Local Git and File Tools"
+    description: str = "Use Composio toolset to run actions with your agent related to local Git and File operations."
     name = "ComposioAPI"
     icon = "Composio"
     documentation: str = "https://docs.composio.dev"
 
     inputs = [
+        SecretStrInput(
+            name="api_key",
+            display_name="Composio API Key",
+            required=True,
+            info="Refer to https://docs.composio.dev/faq/api_key/api_key",
+            real_time_refresh=True,
+        ),
         DropdownInput(
-            name="tool_names",
+            name="tool_actions",
             display_name="Tool Names",
-            options=[],
+            options=['FILETOOL_GIT_CLONE','FILETOOL_GIT_REPO_TREE','FILETOOL_GIT_CUSTOM','FILETOOL_LIST_FILES','FILETOOL_CREATE_FILE','FILETOOL_EDIT_FILE'],
             value="",
-            info="The app name to use. Please refresh after selecting app name",
+            info="The tool name to use. Please refresh after selecting app name",
             refresh_button=True,
             required=True,
         )
@@ -45,5 +52,5 @@ class ComposioAPIComponent(LCToolComponent):
             Sequence[Tool]: List of configured Composio tools.
         """
         composio_toolset = ComposioToolSet(api_key=self.api_key)
-        return composio_toolset.get_tools(actions=self.tool_names)
+        return composio_toolset.get_tools(actions=[self.tool_actions])
 
