@@ -14,6 +14,8 @@ When running the command below there might be errors printed out. You may ignore
 ```zsh
 uv run langflow run --log-level debug
 ```
+*  Open LangFlow using the link output CMD + click
+
 ## Install Ollama
 
 ```zsh
@@ -40,9 +42,13 @@ uv pip install langchain-ibm
 uv pip install --upgrade ibm-cloud-sdk-core
 ```
 
+## install local git mcp server
+```zsh
+uv tool install mcp-server-git
+uv tool update-shell
+```
 
 
-## Open LangFlow
 
-http://127.0.0.1:7862/
+
 
