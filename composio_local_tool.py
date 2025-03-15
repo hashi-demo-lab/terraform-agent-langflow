@@ -18,7 +18,7 @@ from langflow.io import Output
 class ComposioAPIComponent(LCToolComponent):
     display_name: str = "Composio Local Git and File Tools"
     description: str = "Use Composio toolset to run actions with your agent related to local Git and File operations."
-    name = "ComposioAPI"
+    name = "Composio Local Git and File Tools"
     icon = "Composio"
     documentation: str = "https://docs.composio.dev"
 
