@@ -44,10 +44,17 @@ uv pip install --upgrade ibm-cloud-sdk-core
 
 ## install local git mcp server
 ```zsh
+source langflow/bin/activate
 uv tool install mcp-server-git
 uv tool update-shell
 ```
 
+## install composio local tools
+```zsh
+source langflow/bin/activate
+uv add composio_core composio_openai
+uv add composio_langchain
+```
 
 
 
