@@ -24,8 +24,8 @@ class ComposioAPIComponent(LCToolComponent):
 
     inputs = [
         DropdownInput(
-            name="app_names",
-            display_name="App Name",
+            name="tool_names",
+            display_name="Tool Names",
             options=[],
             value="",
             info="The app name to use. Please refresh after selecting app name",
@@ -44,6 +44,6 @@ class ComposioAPIComponent(LCToolComponent):
         Returns:
             Sequence[Tool]: List of configured Composio tools.
         """
-        composio_toolset = ComposioToolSet()
-        return composio_toolset.get_tools(self.tool_names)
+        composio_toolset = ComposioToolSet(api_key=self.api_key)
+        return composio_toolset.get_tools(actions=self.tool_names)
 
