@@ -85,7 +85,7 @@ class WatsonxComponent(LCModelComponent):
             tokens = int(self.max_tokens) if self.max_tokens else 1024
             
             model_params = {
-                "streaming": True
+                "time_limit": 100000,
             }
 
             # Create credentials and API client, then set the default project
@@ -97,9 +97,9 @@ class WatsonxComponent(LCModelComponent):
                 model_id=model_id,
                 watsonx_client=client, 
                 params=model_params,
+                streaming=True,
                 project_id=self.project_id,
                 url=endpoint
-
             )
 
             return output
