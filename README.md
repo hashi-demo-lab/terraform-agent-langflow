@@ -12,7 +12,8 @@ uv pip install langflow
 When running the command below there might be errors printed out. You may ignore these errors, LangFlow still works despite these.
 
 ```zsh
-uv run langflow run --log-level debug
+source langflow/bin/activate
+uv run langflow run --env-file .env
 ```
 *  Open LangFlow using the link output CMD + click
 
@@ -65,5 +66,3 @@ ollama run qwen2.5-coder:14b
 ```zsh
 ollama run qwq
 ```
-
-
