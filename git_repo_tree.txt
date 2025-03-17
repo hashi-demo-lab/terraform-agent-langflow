@@ -8,7 +8,9 @@ assets/watsonx.svg
 custom_components/composio_local_tool.py
 custom_components/vault_component.py
 custom_components/watsonx_comp.py
-examples/TerraformModuleWorkflow.json
+examples/.DS_Store
+examples/TerraformModuleWorkflow_WIP_latest.json
+examples/TerraformModuleWorkflow_WIP_working.json
 examples/agent/README.md
 examples/agent/__init__.py
 examples/agent/agent.py
@@ -25,7 +27,11 @@ examples/langgraph_agent/custom_tools.py
 examples/langgraph_agent/inputs.py
 examples/langgraph_agent/main.py
 examples/langgraph_agent/prompts.py
+examples/main.tf
 examples/tool-use.json
+git_repo_tree.txt
+inputPromp.txt
 models.json
+promptTemplate.txt
 terraform-agent-langflow.code-workspace
 workflow.json

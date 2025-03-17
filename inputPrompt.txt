@@ -26,5 +26,5 @@ Step 8: Review the versions.tf file and update to ensure it has Terraform and pr
 Step 10: Review the examples/ directory and ensure it includes usage examples
 Step 11: Review the tests/ directory and ensure it includes unit tests using the new Terraform Test framework, its important not to use Terratest, instead use the new Terraform Test framework which is HCL based 
 
-After each step, summarise the result in the following format, keep it brief and only the following format:
-- Step {step_number} - {step_description}: {result}
+After each step, summarise the result in the following format, keep it brief and only the following format make description brief and to the point:
+{agent name} - Step {step_number} - {step_description}: {result}

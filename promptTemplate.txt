@@ -28,10 +28,6 @@ Create a reusable Terraform module for provisioning AWS S3 buckets with configur
 - Support secure access policies
 - Allow configuration of appropriate bucket policies
 
-### Performance and Efficiency
-- Support intelligent tiering and lifecycle rules
-- Allow configuration of performance options where relevant
-
 ## Deliverables
 1. Complete Terraform module code using the clone template repository, updated the existing files, and added new files as needed:
    - main.tf
