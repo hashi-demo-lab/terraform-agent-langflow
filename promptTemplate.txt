@@ -1,0 +1,57 @@
+# AWS S3 Terraform Module Creation Prompt
+
+## Task Description
+Create a reusable Terraform module for provisioning AWS S3 buckets with configurable options for common use cases. The module should follow infrastructure-as-code best practices and provide flexibility while maintaining sensible defaults.
+
+## Requirements
+
+### Core Functionality
+- Create an S3 bucket with configurable basic attributes (name, region, tags)
+- Support bucket versioning configuration
+- Support server-side encryption options
+- Implement configurable lifecycle rules
+- Configure bucket access logging (optional)
+- Set up CORS configuration (optional)
+- Configure bucket policies (optional)
+- Support object lock configuration (optional)
+
+### Module Structure
+- Follow Terraform module best practices
+- Include appropriate variable definitions with descriptions and defaults
+- Provide useful outputs for the created resources
+- Include README.md with usage examples
+- Add proper in-line documentation for resources
+
+### Security Considerations
+- Enable encryption by default
+- Disable public access by default
+- Support secure access policies
+- Allow configuration of appropriate bucket policies
+
+### Performance and Efficiency
+- Support intelligent tiering and lifecycle rules
+- Allow configuration of performance options where relevant
+
+## Deliverables
+1. Complete Terraform module code using the clone template repository, updated the existing files, and added new files as needed:
+   - main.tf
+   - variables.tf
+   - outputs.tf
+   - outputs.tf
+   - README.md
+   - examples/
+   - tests/
+
+2. Implementation of all required features with appropriate configuration options
+
+3. Comprehensive documentation including:
+   - Module usage instructions
+   - Variable descriptions
+   - Example configurations
+
+## Example Usage
+Provide examples of how the module should be used in common scenarios:
+- Basic S3 bucket creation
+- Secure S3 bucket with versioning and encryption
+- S3 bucket with lifecycle rules for cost optimization
+- S3 bucket configured for static website hosting
