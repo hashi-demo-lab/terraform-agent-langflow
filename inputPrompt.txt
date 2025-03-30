@@ -15,8 +15,13 @@ Before creating the repository, ensure the following:
    - description: {description}
    - private: {visibility == "public"}
    - Verify repository name follows Terraform Registry naming convention: terraform-{provider}-{name}
+   - return the repository name
+   - return the provider where format is terraform-{provider}-{name}.git
+   - return the name where format is terraform-{provider}-{name}
+   - return the owner is always hashi-demo-lab
 
 Step 2: Clone  the newly created repository https://github.com/hashi-demo-lab/terraform-{provider}-{name}.git to your local machine to the ./tmp directory
+         - as an example git clone https://github.com/hashi-demo-lab/terraform-aws-s3.git
 Step 3: Switch to the cloned repository directory which is located in the ./tmp then the repository name terraform-{provider}-{name}
 Step 4: understand the repository structure and the purpose of each file
 Step 5: Review the main.tf file and update the code to ensure it includes all the core aws_s3_bucket resource and all another related resources for an S3 modules with proper security configurations
